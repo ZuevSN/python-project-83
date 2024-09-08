@@ -1,0 +1,5 @@
+.venv/
+__pycahe__
+dist/
+.env
+tests/__pycache__/
