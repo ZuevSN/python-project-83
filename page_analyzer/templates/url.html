@@ -1,10 +1,23 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>ID {{ url.id }}</title>
-    </head>
-    <body>
-        <h1>URL {{ url.name }}</h1>
-        <p>Created at: {{ url.created_at }}</p>
-    </body>
-</html>
+{% extends 'base.html' %}
+
+{% block main %}
+<h1>Сайт: {{ url.name }}</h1>
+<div class="table-responsive">
+<table class="table table-bordered table-hover text-nowrap" data-test="url">
+    <tbody>
+        <tr>
+            <td>ID</th>
+            <td>{{ url.id }}</td>
+        </tr>
+        <tr>
+            <td>URL</th>
+            <td>{{ url.name }}</td>
+        </tr>
+        <tr>
+            <td>Created at</th>
+            <td>{{ url.created_at }}</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+{% endblock %}

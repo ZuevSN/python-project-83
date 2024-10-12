@@ -1,50 +1,55 @@
 #!/usr/bin/env python3
-from flask import Flask, render_template, request, flash
+from flask import (
+    Flask, render_template,
+    request, get_flashed_messages,
+    flash, redirect, url_for
+)
 from dotenv import load_dotenv
 import os
-#from page_analyzer.db_manager import db_manager as db
 import page_analyzer.db_manager as db
-import psycopg2
-from psycopg2.extras import DictCursor
-from page_analyzer.additioanal_functions import validate
+from page_analyzer.additioanal_functions import validate, normalize
 
 load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-#app.config['DATABASE_URL'] = os.getenv('DATABASE_URL')
-DATABASE_URL = os.getenv('DATABASE_URL')
 
-
-print(os.getcwd())
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    messages = get_flashed_messages(with_categories=True)
+    return render_template("index.html", messages = messages)
 
 
 @app.post('/urls')
-def post_url():
+def new_url():
     url = request.form.get('url')
+    original_url = url
+    url = normalize(url)
     error = validate(url)
+    print(error)
     if error:
         flash(error, 'error')
-        return render_template("index.html"), 422
+        return render_template("index.html", post_=original_url), 422
+    id = db.set_url(url)
+
+    flash('Страница успешно добавлена', 'alert-success')
+    return redirect(url_for('get_url_by_id', id=id))
 
 
 @app.route('/urls')
 def get_urls():
-    result = db.get_urls()
-    print(result)
-    return render_template("urls.html", urls=result)
+    urls = db.get_urls()
+    print(urls)
+    return render_template("urls.html", urls=urls)
 
 
 @app.route('/urls/<id>')
 def get_url_by_id(id):
-    result = db.get_url_by_id(id)
-    if result:
-        return render_template("url.html", url=result)
+    url = db.get_url_by_id(id)
+    if url:
+        return render_template("url.html", url=url)
     else:
-        return "URL not found", 404
+        return render_template("404.html"), 404
 
 
 if __name__ == "__main__":

@@ -24,34 +24,41 @@ def connection(func):
 
 
 @connection
-def read_query(conn, query, values=None):
+def read_base(conn, sql, values=None):
     with conn.cursor(cursor_factory=DictCursor) as curs:
-        curs.execute(query, values)
+        curs.execute(sql, values)
 #        result = curs.fetchall()
         result = [dict(row) for row in curs.fetchall()]
     return result
 
 @connection
-def write_query(conn, query, values=None):
+def edit_base(conn, sql, values=None):
     with conn.cursor() as curs:
-        curs.execute(query, values)
+        curs.execute(sql, values)
+        conn.commit()
+        return curs.fetchone()[0]
 
 def is_get_url_by_name(url):
-    query = """SELECT null FROM urls WHERE name = %s"""
-    result = read_query(query, (url,))
+    sql = """SELECT null FROM urls WHERE name = %s"""
+    result = read_base(sql, (url,))
     return bool(result)
 
 def get_urls():
-    query = """SELECT * FROM urls"""
-    result = read_query(query)
+    sql = """SELECT * FROM urls ORDER BY id DESC"""
+    result = read_base(sql)
     return result
 
 def get_url_by_id(id):
-    query = """SELECT * FROM urls WHERE id = %s"""
-    result = read_query(query, (id,))
+    sql = """SELECT * FROM urls WHERE id = %s"""
+    result = read_base(sql, (id,))
     return result[0]
 
 def get_url_by_name(name):
-    query = """SELECT * FROM urls WHERE name = %s"""
-    result = read_query(query, (name,))
+    sql = """SELECT * FROM urls WHERE name = %s"""
+    result = read_base(sql, (name,))
     return result[0]
+
+def set_url(url):
+    sql = """INSERT INTO urls (name) values (%s) RETURNING id"""
+    result = edit_base(sql,(url,))
+    return result
