@@ -3,10 +3,9 @@ from flask import Flask, render_template, request, flash
 from dotenv import load_dotenv
 import os
 #from page_analyzer.db_manager import db_manager as db
-import page_analyzer.db_manager as db
 import psycopg2
 from psycopg2.extras import DictCursor
-from page_analyzer.additioanal_functions import validate
+from additioanal_functions import validate
 
 load_dotenv()
 app = Flask(__name__)
@@ -23,29 +22,39 @@ def index():
 
 
 @app.post('/urls')
-def post_url():
+def set_url():
     url = request.form.get('url')
     error = validate(url)
     if error:
         flash(error, 'error')
         return render_template("index.html"), 422
-
+    
+    
 
 @app.route('/urls')
-def get_urls():
-    result = db.get_urls()
-    print(result)
-    return render_template("urls.html", urls=result)
+def urls():
+    return render_template("urls.html")
 
 
 @app.route('/urls/<id>')
-def get_url_by_id(id):
-    result = db.get_url_by_id(id)
-    if result:
-        return render_template("url.html", url=result)
+def url(id):
+    # Execute a SQL query to retrieve the URL with the given ID
+    sql = "SELECT * FROM public.urls WHERE id = %s"
+    conn = psycopg2.connect(DATABASE_URL)
+    with conn:
+        with conn.cursor(cursor_factory=DictCursor) as curs:
+            curs.execute(sql, (id,))
+            url = curs.fetchone()
+    conn.close()
+    if url:
+        return render_template("url.html", url=url)
     else:
         return "URL not found", 404
 
 
+def my_func():
+    print(1+1)
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    my_func()
+#    app.run(debug=True)
