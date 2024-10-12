@@ -8,9 +8,9 @@ def validate(url):
     if not url:
         error = 'URL не введен'
     elif not is_url(url) or len(url)>255:
-        error = 'URL не корректный'
+        error = 'Некорректный URL'
     elif is_get_url_by_name(url):
-        error = 'URL уже есть в базе'
+        error = 'Страница уже существует'
     return error
 
 def normalize(url):
