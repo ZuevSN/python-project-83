@@ -1,6 +1,6 @@
-DROP TABLE urls;
+DROP TABLE IF EXISTS urls;
 CREATE TABLE urls (
     id SERIAL PRIMARY KEY,
-    name varchar(255) NOT NULL
+    name varchar(255) NOT NULL,
 	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
