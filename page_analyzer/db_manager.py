@@ -68,12 +68,6 @@ def get_url_by_id(id):
     return result[0]
 
 
-def get_url_by_name(name):
-    sql = """SELECT * FROM urls WHERE name = %s"""
-    result = read_base(sql, (name,))
-    return result[0]
-
-
 def set_url(url):
     sql = """INSERT INTO urls (name) values (%s) RETURNING id"""
     result = edit_base(sql, (url,))
@@ -81,7 +75,7 @@ def set_url(url):
 
 
 def get_checks_by_id(id):
-    sql = """SELECT * FROM url_checks WHERE url_id = %s"""
+    sql = """SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC"""
     result = read_base(sql, (id,))
     return result
 
