@@ -82,7 +82,7 @@ def set_url(url):
 
 
 def get_checks_by_id(id):
-    sql = """SELECT * FROM url_checks WHERE url_id = %s"""
+    sql = """SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC"""
     result = read_base(sql, (id,))
     return result
 
