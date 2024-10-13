@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from flask import (
     Flask, render_template,
-    request,flash, redirect,
+    request, flash, redirect,
     url_for
 )
 from dotenv import load_dotenv
@@ -21,7 +21,8 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 def index():
     return render_template("index.html")
 
-#написать декоратор исключений
+
+# написать декоратор исключений
 @app.post('/urls')
 def new_url():
     try:
@@ -36,7 +37,7 @@ def new_url():
         id = db.set_url(url)
         flash('Страница успешно добавлена', 'alert-success')
         return redirect(url_for('get_url_by_id', id=id))
-    except Exception as e:
+    except Exception:
         return render_template("500.html", 500)
 
 
@@ -46,7 +47,7 @@ def get_urls():
         urls = {}
         urls = db.get_urls()
         return render_template("urls.html", urls=urls)
-    except Exception as e:
+    except Exception:
         return render_template("500.html", 500)
 
 
@@ -59,7 +60,7 @@ def get_url_by_id(id):
         if not url:
             return render_template("404.html"), 404
         return render_template("url.html", url=url, checks=checks)
-    except Exception as e:
+    except Exception:
         return render_template("500.html"), 500
 
 
@@ -68,14 +69,15 @@ def new_check(id):
     try:
         try:
             data = get_html_data(id)
-        except Exception as e:
+        except Exception:
             flash('Произошла ошибка при проверке', 'alert-success')
             return redirect(url_for('get_url_by_id', id=id))
         db.set_check(data)
         flash('Страница успешно проверена', 'alert-success')
         return redirect(url_for('get_url_by_id', id=id))
-    except Exception as e:
-            return render_template("500.html"), 500
+    except Exception:
+        return render_template("500.html"), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)
