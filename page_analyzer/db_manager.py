@@ -27,6 +27,8 @@ def connection(func):
 @connection
 def read_base(conn, sql, values=None):
     with conn.cursor(cursor_factory=DictCursor) as curs:
+        print(sql)
+        print(values)
         curs.execute(sql, values)
         result = [dict(row) for row in curs.fetchall()]
     return result
@@ -60,13 +62,20 @@ def get_urls():
 def get_url_by_id(id):
     sql = """SELECT * FROM urls WHERE id = %s"""
     result = read_base(sql, (id,))
-    return result[0]
+    if result:
+        return result[0]
+    else:
+        return None
 
 
 def get_url_by_name(name):
     sql = """SELECT id FROM urls WHERE name = %s"""
+    print(name)
     result = read_base(sql, (name,))
-    return result[0]
+    if result:
+        return result[0]
+    else:
+        return None
 
 
 def set_url(url):

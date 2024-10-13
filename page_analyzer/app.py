@@ -33,13 +33,15 @@ def new_url():
         print(error)
         if error:
             flash(error, 'danger')
-            #return render_template("index.html", url=original_url), 422
-            return render_template('index.html'), 422
-        id = db.get_url_by_name(url)['id']
+            return render_template("index.html", url=original_url), 422
+        print(url)
+        id = db.get_url_by_name(url)
         if id:
             flash('Страница уже существует', 'info')
         else:
+            print(url)
             id = db.set_url(url)
+            print(db.set_url(url))
             flash('Страница успешно добавлена', 'success')
         print(id)
         return redirect(url_for('get_url_by_id', id=id))
