@@ -71,7 +71,7 @@ def get_checks_by_id(id):
     result = read_base(sql, (id,))
     return result
 
-def set_check(url_id):
-    sql = """INSERT INTO url_checks (url_id) values (%s) RETURNING id"""
-    result = edit_base(sql,(url_id,))
+def set_check(data):
+    sql = """INSERT INTO url_checks (url_id,status_code, h1, title, description) values (%s, %s, %s, %s, %s) RETURNING id"""
+    result = edit_base(sql, data)
     return result

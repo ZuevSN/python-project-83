@@ -7,7 +7,10 @@ from flask import (
 from dotenv import load_dotenv
 import os
 import page_analyzer.db_manager as db
-from page_analyzer.additioanal_functions import validate, normalize
+from page_analyzer.additioanal_functions import (
+    validate, normalize, get_html_data
+)
+
 
 load_dotenv()
 app = Flask(__name__)
@@ -63,7 +66,12 @@ def get_url_by_id(id):
 @app.post('/urls/<id>/checks')
 def new_check(id):
     try:
-        db.set_check(id)
+        try:
+            data = get_html_data(id)
+        except Exception as e:
+            flash('Произошла ошибка при проверке', 'alert-success')
+            return redirect(url_for('get_url_by_id', id=id))
+        db.set_check(data)
         flash('Страница успешно проверена', 'alert-success')
         return redirect(url_for('get_url_by_id', id=id))
     except Exception as e:
