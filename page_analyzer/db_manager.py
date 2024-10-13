@@ -49,7 +49,8 @@ def is_get_url_by_name(url):
 
 def get_urls():
     sql = """   SELECT urls.id, urls.name,
-                    uc.created_at, uc.status_code
+                    uc.created_at,
+                    uc.status_code
                 FROM urls
                 LEFT JOIN (
                     SELECT id, url_id, status_code, h1,
@@ -68,6 +69,12 @@ def get_url_by_id(id):
     return result[0]
 
 
+def get_url_by_name(name):
+    sql = """SELECT * FROM urls WHERE name = %s"""
+    result = read_base(sql, (name,))
+    return result[0]
+
+
 def set_url(url):
     sql = """INSERT INTO urls (name) values (%s) RETURNING id"""
     result = edit_base(sql, (url,))
@@ -75,7 +82,7 @@ def set_url(url):
 
 
 def get_checks_by_id(id):
-    sql = """SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC"""
+    sql = """SELECT * FROM url_checks WHERE url_id = %s"""
     result = read_base(sql, (id,))
     return result
 
