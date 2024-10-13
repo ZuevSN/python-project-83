@@ -27,7 +27,6 @@ def connection(func):
 def read_base(conn, sql, values=None):
     with conn.cursor(cursor_factory=DictCursor) as curs:
         curs.execute(sql, values)
-#        result = curs.fetchall()
         result = [dict(row) for row in curs.fetchall()]
     return result
 
@@ -38,6 +37,7 @@ def edit_base(conn, sql, values=None):
         conn.commit()
         return curs.fetchone()[0]
 
+#сделать фабрику функций
 def is_get_url_by_name(url):
     sql = """SELECT null FROM urls WHERE name = %s"""
     result = read_base(sql, (url,))
@@ -61,4 +61,14 @@ def get_url_by_name(name):
 def set_url(url):
     sql = """INSERT INTO urls (name) values (%s) RETURNING id"""
     result = edit_base(sql,(url,))
+    return result
+
+def get_checks_by_id(id):
+    sql = """SELECT * FROM url_checks WHERE url_id = %s"""
+    result = read_base(sql, (id,))
+    return result
+
+def set_check(url_id):
+    sql = """INSERT INTO url_checks (url_id) values (%s) RETURNING id"""
+    result = edit_base(sql,(url_id,))
     return result

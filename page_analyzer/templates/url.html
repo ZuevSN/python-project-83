@@ -1,23 +1,9 @@
-{% extends 'base.html' %}
+{% include 'header.html' %}
+    <main class="flex-grow-1">
+        <div class="container-lg mt-3">
+            {% include 'content_url_info.html' %}
 
-{% block main %}
-<h1>Сайт: {{ url.name }}</h1>
-<div class="table-responsive">
-<table class="table table-bordered table-hover text-nowrap" data-test="url">
-    <tbody>
-        <tr>
-            <td>ID</th>
-            <td>{{ url.id }}</td>
-        </tr>
-        <tr>
-            <td>Имя</th>
-            <td>{{ url.name }}</td>
-        </tr>
-        <tr>
-            <td>Дата создания</th>
-            <td>{{ url.created_at }}</td>
-        </tr>
-    </tbody>
-</table>
-</div>
-{% endblock %}
+            {% include 'content_url_check.html' %}
+        </div>
+    </main>
+{% include 'footer.html' %}

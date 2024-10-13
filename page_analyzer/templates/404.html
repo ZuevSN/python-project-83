@@ -1,9 +1,11 @@
-{% extends 'base.html' %}
+{% include 'header.html' %}
 
-{% block main %}
-<h1>Страница не найдена</h1>
+<main class="flex-grow-1">
+    <div class="container-lg mt-3">
+        <h1>Страница не найдена</h1>
+        <p>Здесь нет того, что вы ищете</p>
+        <p><a href="/">Вернуться на главную</a></p>
+    </div>
+</main>
 
-    
-<p>Здесь нет того, что вы ищете</p>
-<p><a href="/">Вернуться на главную</a></p>
-{% endblock %}
+{% include 'footer.html' %}
