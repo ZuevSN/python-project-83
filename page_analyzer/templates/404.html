@@ -1,5 +1,6 @@
-{% include 'header.html' %}
+{% extends 'base.html' %}
 
+{% block content %}
 <main class="flex-grow-1">
     <div class="container-lg mt-3">
         <h1>Страница не найдена</h1>
@@ -7,5 +8,4 @@
         <p><a href="/">Вернуться на главную</a></p>
     </div>
 </main>
-
-{% include 'footer.html' %}
+{% endblock %}

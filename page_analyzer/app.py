@@ -32,14 +32,14 @@ def new_url():
         error = validate(url)
         print(error)
         if error:
-            flash(error, 'alert-danger')
+            flash(error, 'danger')
             return render_template("index.html", url=original_url), 422
         id = db.get_url_by_name(url)['id']
         if id:
-            flash('Страница уже существует', 'alert-info')
+            flash('Страница уже существует', 'info')
         else:
             id = db.set_url(url)
-            flash('Страница успешно добавлена', 'alert-success')
+            flash('Страница успешно добавлена', 'success')
         print(id)
         return redirect(url_for('get_url_by_id', id=id))
     except Exception:
@@ -75,10 +75,10 @@ def new_check(id):
         try:
             data = get_html_data(id)
         except Exception:
-            flash('Произошла ошибка при проверке', 'alert-success')
+            flash('Произошла ошибка при проверке', 'danger')
             return redirect(url_for('get_url_by_id', id=id))
         db.set_check(data)
-        flash('Страница успешно проверена', 'alert-success')
+        flash('Страница успешно проверена', 'success')
         return redirect(url_for('get_url_by_id', id=id))
     except Exception:
         return render_template("500.html"), 500
