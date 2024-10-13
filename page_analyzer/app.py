@@ -42,7 +42,6 @@ def get_urls():
     try:
         urls = {}
         urls = db.get_urls()
-        print(urls)
         return render_template("urls.html", urls=urls)
     except Exception as e:
         return render_template("500.html", 500)

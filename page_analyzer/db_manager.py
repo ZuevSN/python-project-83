@@ -44,7 +44,10 @@ def is_get_url_by_name(url):
     return bool(result)
 
 def get_urls():
-    sql = """SELECT * FROM urls ORDER BY id DESC"""
+    sql = """   SELECT urls.id, urls.name, uc.created_at, uc.status_code FROM urls
+                LEFT JOIN (
+                    SELECT id, url_id,status_code,h1,title,description, created_at, max(id) over (partition by url_id) max_id  FROM url_checks
+                    ) uc ON urls.id = uc.url_id AND uc.max_id = uc.id ORDER BY id DESC"""
     result = read_base(sql)
     return result
 
