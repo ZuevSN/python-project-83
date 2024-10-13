@@ -33,7 +33,8 @@ def new_url():
         print(error)
         if error:
             flash(error, 'danger')
-            return render_template("index.html", url=original_url), 422
+            #return render_template("index.html", url=original_url), 422
+            return render_template('index.html'), 422
         id = db.get_url_by_name(url)['id']
         if id:
             flash('Страница уже существует', 'info')
