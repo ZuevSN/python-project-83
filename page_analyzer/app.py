@@ -34,8 +34,12 @@ def new_url():
         if error:
             flash(error, 'error')
             return render_template("index.html", url=original_url), 422
-        id = db.set_url(url)
-        flash('Страница успешно добавлена', 'alert-success')
+        id = db.get_url_by_name(url)['id']
+        if id:
+            flash('Страница уже существует', 'error')
+        else:
+            id = db.set_url(url)
+            flash('Страница успешно добавлена', 'alert-success')
         return redirect(url_for('get_url_by_id', id=id))
     except Exception:
         return render_template("500.html", 500)

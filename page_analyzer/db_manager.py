@@ -41,12 +41,6 @@ def edit_base(conn, sql, values=None):
 
 
 # сделать фабрику функций
-def is_get_url_by_name(url):
-    sql = """SELECT null FROM urls WHERE name = %s"""
-    result = read_base(sql, (url,))
-    return bool(result)
-
-
 def get_urls():
     sql = """   SELECT urls.id, urls.name,
                     uc.created_at,
@@ -70,7 +64,7 @@ def get_url_by_id(id):
 
 
 def get_url_by_name(name):
-    sql = """SELECT * FROM urls WHERE name = %s"""
+    sql = """SELECT id FROM urls WHERE name = %s"""
     result = read_base(sql, (name,))
     return result[0]
 

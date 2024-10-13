@@ -11,8 +11,6 @@ def validate(url):
         error = 'URL не введен'
     elif not is_url(url) or len(url) > 255:
         error = 'Некорректный URL'
-    elif db.is_get_url_by_name(url):
-        error = 'Страница уже существует'
     return error
 
 
