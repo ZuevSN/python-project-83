@@ -28,8 +28,8 @@ def get_html_data(url_id):
     url = db.get_url_by_id(url_id)
     print(url)
     response = requests.get(url['name'])
-#    status_code = response.status_code
-    response.raise_for_status()
+    status_code = response.status_code
+#    status_code = response.raise_for_status()
     print(status_code)
     soup = BeautifulSoup(response.text, 'html.parser')
     h1 = soup.find('h1')
