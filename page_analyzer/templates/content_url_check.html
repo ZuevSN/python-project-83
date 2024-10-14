@@ -14,20 +14,18 @@
                 <th>Дата создания</th>
             </tr>
         </thead>
-        {% if checks %}
             <tbody>
                 {% for check in checks %}
                 <tr>
-                    <th>{{check.id|default('', true)}}</th>
-                    <th>{{check.status_code|default('', true)}}</th>
-                    <th>{{check.h1|default('', true)}}</th>
-                    <th>{{check.title|default('', true)}}</th>
-                    <th>{{check.description|default('', true)}}</th>
-                    <th>{{check.created_at|default('', true)}}</th>
+                    <td>{{check.id|default('', true)}}</td>
+                    <td>{{check.status_code|default('', true)}}</td>
+                    <td>{{check.h1|default('', true)}}</td>
+                    <td>{{check.title|default('', true)}}</td>
+                    <td>{{check.description|default('', true)}}</td>
+                    <td>{{check.created_at|default('', true)}}</td>
                 </tr>
                 {% endfor %}
-            </tbody>
-        {% endif %}
+        </tbody>
     </table>
 </div>
 
