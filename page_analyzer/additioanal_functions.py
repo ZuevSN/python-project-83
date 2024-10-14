@@ -5,11 +5,15 @@ import requests
 from bs4 import BeautifulSoup
 
 
+MAX_LENGTH = 255
+
 def validate(url):
     error = None
     if not url:
-        error = 'URL не введен'
-    elif not is_url(url) or len(url) > 255:
+        error = 'URL обязателен'
+    elif len(url) > MAX_LENGTH:
+        error = f'URL превышает {MAX_LENGTH} символов'
+    elif not is_url(url):
         error = 'Некорректный URL'
     return error
 

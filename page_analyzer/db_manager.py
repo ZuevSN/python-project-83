@@ -13,13 +13,11 @@ def connection(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         conn = psycopg2.connect(DATABASE_URL)
-        print('Соединение установлено')
         try:
             print(f'Выполняется {func.__name__}')
             result = func(conn, *args, **kwargs)
         finally:
             conn.close()
-            print('Соединение разорвано')
         return result
     return wrapper
 
@@ -27,8 +25,6 @@ def connection(func):
 @connection
 def read_base(conn, sql, values=None):
     with conn.cursor(cursor_factory=DictCursor) as curs:
-        print(sql)
-        print(values)
         curs.execute(sql, values)
         result = [dict(row) for row in curs.fetchall()]
     return result
@@ -42,11 +38,15 @@ def edit_base(conn, sql, values=None):
         return curs.fetchone()[0]
 
 
-# сделать фабрику функций
+def get_one_row(data):
+    result = data[0] if data else data
+    print(f'getonerow{result}')
+    return result
+
+
 def get_urls():
     sql = """   SELECT urls.id, urls.name,
-                    uc.created_at,
-                    uc.status_code
+                    uc.created_at, uc.status_code
                 FROM urls
                 LEFT JOIN (
                     SELECT id, url_id, status_code, h1,
@@ -59,23 +59,21 @@ def get_urls():
     return result
 
 
+def get_first_row(data):
+    result = data[0] if data else {}
+    return result
+
+
 def get_url_by_id(id):
-    sql = """SELECT * FROM urls WHERE id = %s"""
+    sql = """SELECT * FROM urls WHERE id = %s LIMIT 1"""
     result = read_base(sql, (id,))
-    if result:
-        return result[0]
-    else:
-        return None
+    return get_first_row(result)
 
 
-def get_url_by_name(name):
-    sql = """SELECT id FROM urls WHERE name = %s"""
-    print(name)
+def get_url_id_by_name(name):
+    sql = """SELECT id FROM urls WHERE name = %s LIMIT 1"""
     result = read_base(sql, (name,))
-    if result:
-        return result[0]
-    else:
-        return None
+    return get_first_row(result).get('id')
 
 
 def set_url(url):
@@ -95,3 +93,4 @@ def set_check(data):
     values (%s, %s, %s, %s, %s) RETURNING id"""
     result = edit_base(sql, data)
     return result
+

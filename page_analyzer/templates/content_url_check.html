@@ -1,5 +1,5 @@
 <h2 class="mt-5 mb-3">Проверки</h2>
-<form method="post" action="{{ url_for('new_check', id=url.id) }}">
+<form method="post" action="{{ url_for('set_check', id=url.id) }}">
     <input type="submit" class="btn btn-primary" value="Запустить проверку">
 </form>
 <div>
@@ -14,18 +14,20 @@
                 <th>Дата создания</th>
             </tr>
         </thead>
-        <tbody>
-            {% for check in checks %}
-            <tr>
-                <th>{{check.id|default('', true)}}</th>
-                <th>{{check.status_code|default('', true)}}</th>
-                <th>{{check.h1|default('', true)}}</th>
-                <th>{{check.title|default('', true)}}</th>
-                <th>{{check.description|default('', true)}}</th>
-                <th>{{check.created_at|default('', true)}}</th>
-            </tr>
-            {% endfor %}
-        </tbody>
+        {% if checks %}
+            <tbody>
+                {% for check in checks %}
+                <tr>
+                    <th>{{check.id|default('', true)}}</th>
+                    <th>{{check.status_code|default('', true)}}</th>
+                    <th>{{check.h1|default('', true)}}</th>
+                    <th>{{check.title|default('', true)}}</th>
+                    <th>{{check.description|default('', true)}}</th>
+                    <th>{{check.created_at|default('', true)}}</th>
+                </tr>
+                {% endfor %}
+            </tbody>
+        {% endif %}
     </table>
 </div>
 
