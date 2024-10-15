@@ -16,10 +16,10 @@
                 <tbody>
                     {% for url in urls %}
                     <tr>
-                        <th>{{url.id}}</th>
-                        <th><a href="{{ url_for('get_url_by_id', id=url.id) }}">{{url.name}}</a></th>
-                        <th>{{url.created_at|default('', true)}}</th>
-                        <th>{{url.status_code|default('', true)}}</th>
+                        <td>{{url.id}}</td>
+                        <td><a href="{{ url_for('get_url_by_id', id=url.id) }}">{{url.name}}</a></td>
+                        <td>{{url.created_at|default('', true)}}</td>
+                        <td>{{url.status_code|default('', true)}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
