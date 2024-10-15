@@ -93,4 +93,3 @@ def set_check(data):
     values (%s, %s, %s, %s, %s) RETURNING id"""
     result = edit_base(sql, data)
     return result
-

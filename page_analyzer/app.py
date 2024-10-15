@@ -18,18 +18,20 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
+
 def render_exceptions(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
             print(f'Выполняется {func.__name__}')
-            return func(*args,**kwargs)
+            return func(*args, **kwargs)
         except Exception as e:
             match e.args[0]:
                 case 404:
                     return render_template("404.html")
             return render_template("500.html")
     return wrapper
+
 
 @app.route('/')
 @render_exceptions

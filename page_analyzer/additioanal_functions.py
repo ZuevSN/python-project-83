@@ -1,11 +1,10 @@
 from validators import url as is_url
 from urllib.parse import urlparse
-import page_analyzer.db_manager as db
-import requests
 from bs4 import BeautifulSoup
 
 
 MAX_LENGTH = 255
+
 
 def validate(url):
     error = None
