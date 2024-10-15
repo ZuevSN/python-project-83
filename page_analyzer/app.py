@@ -7,7 +7,7 @@ from flask import (
 from dotenv import load_dotenv
 import os
 import page_analyzer.db_manager as db
-from page_analyzer.additioanal_functions import (
+from page_analyzer.url_functions import (
     validate, normalize, get_html_data
 )
 from functools import wraps
