@@ -11,6 +11,7 @@ from page_analyzer.additioanal_functions import (
     validate, normalize, get_html_data
 )
 from functools import wraps
+import requests
 
 
 load_dotenv()
@@ -77,11 +78,14 @@ def get_url_by_id(id):
 @app.post('/urls/<id>/checks')
 @render_exceptions
 def set_check(id):
+    url_name = db.get_url_by_id(id)['name']
     try:
-        data = get_html_data(id)
-    except Exception:
+        response = requests.get(url_name)
+        response.raise_for_status()
+    except requests.exceptions.RequestException:
         flash('Произошла ошибка при проверке', 'danger')
         return redirect(url_for('get_url_by_id', id=id))
+    data = [id] + get_html_data(response)
     db.set_check(data)
     flash('Страница успешно проверена', 'success')
     return redirect(url_for('get_url_by_id', id=id))
