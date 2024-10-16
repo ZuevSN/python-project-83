@@ -24,9 +24,10 @@ def normalize(url):
 
 def get_html_data(response):
     data = []
+    response.encoding = 'utf-8'
     status_code = response.status_code
     data.append(status_code)
-    soup = BeautifulSoup(response.text, 'html.parser', from_encoding='utf-8')
+    soup = BeautifulSoup(response.text, 'html.parser')
     h1 = soup.find('h1')
     h1 = h1.text if h1 else None
     data.append(h1)

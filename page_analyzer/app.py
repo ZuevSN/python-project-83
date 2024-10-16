@@ -17,6 +17,7 @@ import requests
 load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['DEBUG'] = os.getenv('DEBUG')
 
 
 def render_exceptions(func):
@@ -94,4 +95,4 @@ def set_check(id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
