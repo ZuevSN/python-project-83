@@ -1,4 +1,5 @@
 .venv/
+__pycahe__
 __pycahe__/
 dist/
 .env
