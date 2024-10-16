@@ -49,7 +49,7 @@ def set_url():
     error = validate(url)
     if error:
         flash(error, 'danger')
-        return render_template("index.html", url=original_url)
+        return render_template("index.html", url=original_url), 422
     id = db.get_url_id_by_name(url)
     if id:
         flash('Страница уже существует', 'info')
