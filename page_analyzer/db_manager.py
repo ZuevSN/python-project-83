@@ -1,40 +1,30 @@
 import psycopg2
 from psycopg2.extras import DictCursor
-import os
-from dotenv import load_dotenv
-from functools import wraps
-
-load_dotenv()
-
-DATABASE_URL = os.getenv('DATABASE_URL')
+from flask import current_app, g
 
 
-def connection(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        conn = psycopg2.connect(DATABASE_URL)
-        try:
-            print(f'Выполняется {func.__name__}')
-            result = func(conn, *args, **kwargs)
-        finally:
-            conn.close()
-        return result
-    return wrapper
+def connect():
+    if 'conn' not in g:
+        g.conn = psycopg2.connect(current_app.config['DATABASE_URL'])
+    return g.conn
 
 
-@connection
-def read_base(conn, sql, values=None):
-    with conn.cursor(cursor_factory=DictCursor) as curs:
+def close_conn(conn):
+    if conn:
+        conn.close()
+
+
+def read_base(sql, values=None):
+    with g.conn.cursor(cursor_factory=DictCursor) as curs:
         curs.execute(sql, values)
         result = [dict(row) for row in curs.fetchall()]
     return result
 
 
-@connection
-def edit_base(conn, sql, values=None):
-    with conn.cursor() as curs:
+def edit_base(sql, values=None):
+    with g.conn.cursor() as curs:
         curs.execute(sql, values)
-        conn.commit()
+        g.conn.commit()
         return curs.fetchone()[0]
 
 

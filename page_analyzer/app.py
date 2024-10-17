@@ -2,7 +2,7 @@
 from flask import (
     Flask, render_template,
     request, flash, redirect,
-    url_for
+    url_for, g
 )
 from dotenv import load_dotenv
 import os
@@ -17,14 +17,24 @@ import requests
 load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['DATABASE_URL'] = os.getenv('DATABASE_URL')
 app.config['DEBUG'] = os.getenv('DEBUG')
+
+
+@app.before_request
+def before_request():
+    g.conn = db.connect()
+
+
+@app.teardown_request
+def teardown_request(exception=None):
+    db.close_conn(g.conn)
 
 
 def render_exceptions(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
-            print(f'Выполняется {func.__name__}')
             return func(*args, **kwargs)
         except Exception as e:
             match e.args[0]:
@@ -34,7 +44,7 @@ def render_exceptions(func):
     return wrapper
 
 
-@app.route('/')
+@app.get('/')
 @render_exceptions
 def index():
     return render_template("index.html")
@@ -59,18 +69,16 @@ def set_url():
     return redirect(url_for('get_url_by_id', id=id))
 
 
-@app.route('/urls')
+@app.get('/urls')
 @render_exceptions
 def get_urls():
-    urls = {}
     urls = db.get_urls()
     return render_template("urls.html", urls=urls)
 
 
-@app.route('/urls/<id>')
+@app.get('/urls/<id>')
 @render_exceptions
 def get_url_by_id(id):
-    url = checks = {}
     url = db.get_url_by_id(id)
     checks = db.get_checks_by_id(id)
     if not url:
