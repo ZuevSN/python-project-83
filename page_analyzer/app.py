@@ -23,12 +23,15 @@ app.config['DEBUG'] = os.getenv('DEBUG')
 
 @app.before_request
 def before_request():
+    if request.endpoint in ['index']:
+        return
     g.conn = db.connect()
 
 
 @app.teardown_request
 def teardown_request(exception=None):
-    db.close_conn(g.conn)
+    if 'conn' in g:
+        db.close_conn(g.conn)
 
 
 def render_exceptions(func):
