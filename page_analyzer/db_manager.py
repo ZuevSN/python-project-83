@@ -81,4 +81,3 @@ def set_check(data):
     values (%s, %s, %s, %s, %s)"""
     execute_query(RETURN_NONE, sql, data)
     g.conn.commit()
-#    return result
