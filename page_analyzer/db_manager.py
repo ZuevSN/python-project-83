@@ -19,6 +19,10 @@ def close_conn(conn):
         conn.close()
 
 
+def get_id(record):
+    return record.id if record else None
+
+
 def execute_query(output_all, sql, values=None):
     with g.conn.cursor(cursor_factory=NamedTupleCursor) as curs:
         curs.execute(sql, values)
@@ -29,6 +33,7 @@ def execute_query(output_all, sql, values=None):
         else:
             result = curs.fetchone()
         return result if result else None
+
 
 def get_urls():
     sql = """   SELECT urls.id, urls.name,
@@ -54,14 +59,15 @@ def get_url_by_id(id):
 def get_url_id_by_name(name):
     sql = """SELECT id FROM urls WHERE name = %s LIMIT 1"""
     result = execute_query(RETURN_ONE, sql, (name,))
-    return getattr(result, 'id', None)
+    print(result)
+    return get_id(result)
 
 
 def set_url(url):
     sql = """INSERT INTO urls (name) values (%s) RETURNING id"""
     result = execute_query(RETURN_ONE, sql, (url,))
     g.conn.commit()
-    return result
+    return get_id(result)
 
 
 def get_checks_by_id(id):
@@ -72,7 +78,7 @@ def get_checks_by_id(id):
 
 def set_check(data):
     sql = """INSERT INTO url_checks (url_id,status_code, h1, title, description)
-    values (%s, %s, %s, %s, %s) RETURNING id"""
-    result = execute_query(RETURN_ONE, sql, data)
+    values (%s, %s, %s, %s, %s)"""
+    execute_query(RETURN_NONE, sql, data)
     g.conn.commit()
-    return result
+#    return result

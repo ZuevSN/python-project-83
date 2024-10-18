@@ -14,14 +14,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for url in urls %}
-                    <tr>
-                        <td>{{url.id}}</td>
-                        <td><a href="{{ url_for('get_url_by_id', id=url.id) }}">{{url.name}}</a></td>
-                        <td>{{url.created_at|default('', true)}}</td>
-                        <td>{{url.status_code|default('', true)}}</td>
-                    </tr>
-                    {% endfor %}
+                    {% if urls %}
+                        {% for url in urls %}
+                        <tr>
+                            <td>{{url.id}}</td>
+                            <td><a href="{{ url_for('get_url_by_id', id=url.id) }}">{{url.name}}</a></td>
+                            <td>{{url.created_at|default('', true)}}</td>
+                            <td>{{url.status_code|default('', true)}}</td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
                 </tbody>
             </table>
         </div>

@@ -92,7 +92,9 @@ def get_url_by_id(id):
 @app.post('/urls/<id>/checks')
 @render_exceptions
 def set_check(id):
-    url_name = db.get_url_by_id(id)['name']
+    url = db.get_url_by_id(id)
+    url_name = url.name
+    print(url_name)
     try:
         response = requests.get(url_name)
         response.raise_for_status()

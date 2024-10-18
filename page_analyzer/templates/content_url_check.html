@@ -15,16 +15,18 @@
             </tr>
         </thead>
             <tbody>
-                {% for check in checks %}
-                <tr>
-                    <td>{{check.id|default('', true)}}</td>
-                    <td>{{check.status_code|default('', true)}}</td>
-                    <td>{{check.h1|default('', true)}}</td>
-                    <td>{{check.title|default('', true)}}</td>
-                    <td>{{check.description|default('', true)}}</td>
-                    <td>{{check.created_at|default('', true)}}</td>
-                </tr>
-                {% endfor %}
+                {% if checks %}
+                    {% for check in checks %}
+                    <tr>
+                        <td>{{check.id|default('', true)}}</td>
+                        <td>{{check.status_code|default('', true)}}</td>
+                        <td>{{check.h1|default('', true)}}</td>
+                        <td>{{check.title|default('', true)}}</td>
+                        <td>{{check.description|default('', true)}}</td>
+                        <td>{{check.created_at|default('', true)}}</td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
         </tbody>
     </table>
 </div>
