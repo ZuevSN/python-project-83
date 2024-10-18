@@ -1,6 +1,11 @@
 import psycopg2
-from psycopg2.extras import DictCursor
+from psycopg2.extras import NamedTupleCursor
 from flask import current_app, g
+
+
+RETURN_ALL = True
+RETURN_ONE = False
+RETURN_NONE = None
 
 
 def connect():
@@ -14,24 +19,15 @@ def close_conn(conn):
         conn.close()
 
 
-def read_base(sql, values=None):
-    with g.conn.cursor(cursor_factory=DictCursor) as curs:
+def execute_query(output_all, sql, values=None):
+    with g.conn.cursor(cursor_factory=NamedTupleCursor) as curs:
         curs.execute(sql, values)
-        result = [dict(row) for row in curs.fetchall()]
-    return result
-
-
-def edit_base(sql, values=None):
-    with g.conn.cursor() as curs:
-        curs.execute(sql, values)
-        g.conn.commit()
-        return curs.fetchone()[0]
-
-
-def get_one_row(data):
-    result = data[0] if data else data
-    print(f'getonerow{result}')
-    return result
+        if output_all is None:
+            return None
+        elif output_all:
+            return curs.fetchall()
+        else:
+            return curs.fetchone()
 
 
 def get_urls():
@@ -45,41 +41,38 @@ def get_urls():
                     FROM url_checks
                     ) uc ON urls.id = uc.url_id AND uc.max_id = uc.id
                     ORDER BY id DESC"""
-    result = read_base(sql)
-    return result
-
-
-def get_first_row(data):
-    result = data[0] if data else {}
+    result = execute_query(RETURN_ALL, sql)
     return result
 
 
 def get_url_by_id(id):
     sql = """SELECT * FROM urls WHERE id = %s LIMIT 1"""
-    result = read_base(sql, (id,))
-    return get_first_row(result)
+    result = execute_query(RETURN_ONE, sql, (id,))
+    return result
 
 
 def get_url_id_by_name(name):
     sql = """SELECT id FROM urls WHERE name = %s LIMIT 1"""
-    result = read_base(sql, (name,))
-    return get_first_row(result).get('id')
+    result = execute_query(RETURN_ONE, sql, (name,))
+    return result
 
 
 def set_url(url):
     sql = """INSERT INTO urls (name) values (%s) RETURNING id"""
-    result = edit_base(sql, (url,))
+    result = execute_query(RETURN_ONE, sql, (url,))
+    g.conn.commit()
     return result
 
 
 def get_checks_by_id(id):
     sql = """SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC"""
-    result = read_base(sql, (id,))
+    result = execute_query(RETURN_ALL, sql, (id,))
     return result
 
 
 def set_check(data):
     sql = """INSERT INTO url_checks (url_id,status_code, h1, title, description)
     values (%s, %s, %s, %s, %s) RETURNING id"""
-    result = edit_base(sql, data)
+    result = execute_query(RETURN_ONE, sql, data)
+    g.conn.commit()
     return result
