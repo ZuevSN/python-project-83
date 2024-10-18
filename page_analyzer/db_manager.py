@@ -23,12 +23,12 @@ def execute_query(output_all, sql, values=None):
     with g.conn.cursor(cursor_factory=NamedTupleCursor) as curs:
         curs.execute(sql, values)
         if output_all is None:
-            return None
+            result = None
         elif output_all:
-            return curs.fetchall()
+            result = curs.fetchall()
         else:
-            return curs.fetchone()
-
+            result = curs.fetchone()
+        return result if result else None
 
 def get_urls():
     sql = """   SELECT urls.id, urls.name,
@@ -54,7 +54,7 @@ def get_url_by_id(id):
 def get_url_id_by_name(name):
     sql = """SELECT id FROM urls WHERE name = %s LIMIT 1"""
     result = execute_query(RETURN_ONE, sql, (name,))
-    return result
+    return getattr(result, 'id', None)
 
 
 def set_url(url):
