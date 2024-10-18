@@ -25,7 +25,8 @@ app.config['DEBUG'] = os.getenv('DEBUG')
 def before_request():
     if request.endpoint in ['index']:
         return
-    g.conn = db.connect()
+    database_url = app.config['DATABASE_URL']
+    g.conn = db.connect(database_url)
 
 
 @app.teardown_request

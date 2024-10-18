@@ -1,6 +1,6 @@
 import psycopg2
 from psycopg2.extras import NamedTupleCursor
-from flask import current_app, g
+from flask import g
 
 
 RETURN_ALL = True
@@ -8,9 +8,9 @@ RETURN_ONE = False
 RETURN_NONE = None
 
 
-def connect():
+def connect(database_url):
     if 'conn' not in g:
-        g.conn = psycopg2.connect(current_app.config['DATABASE_URL'])
+        g.conn = psycopg2.connect(database_url)
     return g.conn
 
 
