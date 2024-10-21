@@ -73,8 +73,8 @@ def get_checks_by_id(conn, id):
     return result
 
 
-def set_check(data):
+def set_check(conn, data):
     sql = """INSERT INTO url_checks (url_id,status_code, h1, title, description)
     values (%s, %s, %s, %s, %s)"""
-    execute_query(RETURN_NONE, sql, data)
+    execute_query(conn, RETURN_NONE, sql, data)
     conn.commit()
