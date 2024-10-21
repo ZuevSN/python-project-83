@@ -12,11 +12,6 @@ def connect(database_url):
     return conn
 
 
-def close_conn(conn):
-    if conn:
-        conn.close()
-
-
 def get_id(record):
     return record.id if record else None
 
@@ -33,7 +28,8 @@ def execute_query(conn, output_all, sql, values=None):
         return result if result else None
 
 
-def get_urls(conn):
+def get_urls(database_url):
+    conn = connect(database_url)
     sql = """   SELECT urls.id, urls.name,
                     uc.created_at, uc.status_code
                 FROM urls
@@ -45,36 +41,47 @@ def get_urls(conn):
                     ) uc ON urls.id = uc.url_id AND uc.max_id = uc.id
                     ORDER BY id DESC"""
     result = execute_query(conn, RETURN_ALL, sql)
+    conn.close()
     return result
 
 
-def get_url_by_id(conn, id):
+def get_url_by_id(database_url, id):
+    conn = connect(database_url)
     sql = """SELECT * FROM urls WHERE id = %s LIMIT 1"""
     result = execute_query(conn, RETURN_ONE, sql, (id,))
+    conn.close()
     return result
 
 
-def get_url_id_by_name(conn, name):
+def get_url_id_by_name(database_url, name):
+    conn = connect(database_url)
     sql = """SELECT id FROM urls WHERE name = %s LIMIT 1"""
     result = execute_query(conn, RETURN_ONE, sql, (name,))
+    conn.close()
     return get_id(result)
 
 
-def set_url(conn, url):
+def set_url(database_url, url):
+    conn = connect(database_url)
     sql = """INSERT INTO urls (name) values (%s) RETURNING id"""
     result = execute_query(conn, RETURN_ONE, sql, (url,))
     conn.commit()
+    conn.close()
     return get_id(result)
 
 
-def get_checks_by_id(conn, id):
+def get_checks_by_id(database_url, id):
+    conn = connect(database_url)
     sql = """SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC"""
     result = execute_query(conn, RETURN_ALL, sql, (id,))
+    conn.close()
     return result
 
 
-def set_check(conn, data):
+def set_check(database_url, data):
+    conn = connect(database_url)
     sql = """INSERT INTO url_checks (url_id,status_code, h1, title, description)
     values (%s, %s, %s, %s, %s)"""
     execute_query(conn, RETURN_NONE, sql, data)
     conn.commit()
+    conn.close()

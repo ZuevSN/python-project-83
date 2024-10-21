@@ -20,6 +20,8 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['DATABASE_URL'] = os.getenv('DATABASE_URL')
 app.config['DEBUG'] = os.getenv('DEBUG')
 
+DATABASE_URL = app.config['DATABASE_URL']
+
 
 def render_exceptions(func):
     @wraps(func)
@@ -50,33 +52,27 @@ def set_url():
     if error:
         flash(error, 'danger')
         return render_template("index.html", url=original_url), 422
-    conn = db.connect(app.config['DATABASE_URL'])
-    id = db.get_url_id_by_name(conn, url)
+    id = db.get_url_id_by_name(DATABASE_URL, url)
     if id:
         flash('Страница уже существует', 'info')
     else:
-        id = db.set_url(url)
+        id = db.set_url(DATABASE_URL, url)
         flash('Страница успешно добавлена', 'success')
-    conn.close()
     return redirect(url_for('get_url_by_id', id=id))
 
 
 @app.get('/urls')
 @render_exceptions
 def get_urls():
-    conn = db.connect(app.config['DATABASE_URL'])
-    urls = db.get_urls()
-    conn.close()
+    urls = db.get_urls(DATABASE_URL)
     return render_template("urls.html", urls=urls)
 
 
 @app.get('/urls/<id>')
 @render_exceptions
 def get_url_by_id(id):
-    conn = db.connect(app.config['DATABASE_URL'])
-    url = db.get_url_by_id(id)
-    checks = db.get_checks_by_id(id)
-    conn.close()
+    url = db.get_url_by_id(DATABASE_URL, id)
+    checks = db.get_checks_by_id(DATABASE_URL, id)
     if not url:
         raise Exception(404)
     return render_template("url.html", url=url, checks=checks)
@@ -85,9 +81,7 @@ def get_url_by_id(id):
 @app.post('/urls/<id>/checks')
 @render_exceptions
 def set_check(id):
-    conn = db.connect(app.config['DATABASE_URL'])
-    url = db.get_url_by_id(id)
-    conn.close()
+    url = db.get_url_by_id(DATABASE_URL, id)
     url_name = url.name
     print(url_name)
     try:
@@ -97,9 +91,7 @@ def set_check(id):
         flash('Произошла ошибка при проверке', 'danger')
         return redirect(url_for('get_url_by_id', id=id))
     data = [id] + get_html_data(response)
-    conn = db.connect(app.config['DATABASE_URL'])
-    db.set_check(data)
-    conn.close()
+    db.set_check(DATABASE_URL, data)
     flash('Страница успешно проверена', 'success')
     return redirect(url_for('get_url_by_id', id=id))
 
