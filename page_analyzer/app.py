@@ -21,20 +21,6 @@ app.config['DATABASE_URL'] = os.getenv('DATABASE_URL')
 app.config['DEBUG'] = os.getenv('DEBUG')
 
 
-@app.before_request
-def before_request():
-    if request.endpoint in ['index']:
-        return
-    database_url = app.config['DATABASE_URL']
-    g.conn = db.connect(database_url)
-
-
-@app.teardown_request
-def teardown_request(exception=None):
-    if 'conn' in g:
-        db.close_conn(g.conn)
-
-
 def render_exceptions(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -64,27 +50,33 @@ def set_url():
     if error:
         flash(error, 'danger')
         return render_template("index.html", url=original_url), 422
-    id = db.get_url_id_by_name(url)
+    conn = db.connect(app.config['DATABASE_URL'])
+    id = db.get_url_id_by_name(conn, url)
     if id:
         flash('Страница уже существует', 'info')
     else:
         id = db.set_url(url)
         flash('Страница успешно добавлена', 'success')
+    conn.close()
     return redirect(url_for('get_url_by_id', id=id))
 
 
 @app.get('/urls')
 @render_exceptions
 def get_urls():
+    conn = db.connect(app.config['DATABASE_URL'])
     urls = db.get_urls()
+    conn.close()
     return render_template("urls.html", urls=urls)
 
 
 @app.get('/urls/<id>')
 @render_exceptions
 def get_url_by_id(id):
+    conn = db.connect(app.config['DATABASE_URL'])
     url = db.get_url_by_id(id)
     checks = db.get_checks_by_id(id)
+    conn.close()
     if not url:
         raise Exception(404)
     return render_template("url.html", url=url, checks=checks)
@@ -93,7 +85,9 @@ def get_url_by_id(id):
 @app.post('/urls/<id>/checks')
 @render_exceptions
 def set_check(id):
+    conn = db.connect(app.config['DATABASE_URL'])
     url = db.get_url_by_id(id)
+    conn.close()
     url_name = url.name
     print(url_name)
     try:
@@ -103,7 +97,9 @@ def set_check(id):
         flash('Произошла ошибка при проверке', 'danger')
         return redirect(url_for('get_url_by_id', id=id))
     data = [id] + get_html_data(response)
+    conn = db.connect(app.config['DATABASE_URL'])
     db.set_check(data)
+    conn.close()
     flash('Страница успешно проверена', 'success')
     return redirect(url_for('get_url_by_id', id=id))
 
