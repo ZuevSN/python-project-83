@@ -78,4 +78,4 @@ def set_check(database_url, data):
     values (%s, %s, %s, %s, %s)"""
     with connect(database_url) as conn:
         execute_query(conn, RETURN_NONE, sql, data)
-    conn.commit()
+        conn.commit()
