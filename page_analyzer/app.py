@@ -83,7 +83,6 @@ def get_url_by_id(id):
 def set_check(id):
     url = db.get_url_by_id(DATABASE_URL, id)
     url_name = url.name
-    print(url_name)
     try:
         response = requests.get(url_name)
         response.raise_for_status()
