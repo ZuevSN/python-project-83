@@ -52,11 +52,13 @@ def set_url():
     if error:
         flash(error, 'danger')
         return render_template("index.html", url=original_url), 422
-    id = db.get_url_id_by_name(DATABASE_URL, url)
+    conn = db.connect(DATABASE_URL)
+    id = db.get_url_id_by_name(conn, url)
     if id:
         flash('Страница уже существует', 'info')
     else:
-        id = db.set_url(DATABASE_URL, url)
+        conn = db.connect(DATABASE_URL)
+        id = db.set_url(conn, url)
         flash('Страница успешно добавлена', 'success')
     return redirect(url_for('get_url_by_id', id=id))
 
@@ -64,15 +66,18 @@ def set_url():
 @app.get('/urls')
 @render_exceptions
 def get_urls():
-    urls = db.get_urls(DATABASE_URL)
+    conn = db.connect(DATABASE_URL)
+    urls = db.get_urls(conn)
     return render_template("urls.html", urls=urls)
 
 
 @app.get('/urls/<id>')
 @render_exceptions
 def get_url_by_id(id):
-    url = db.get_url_by_id(DATABASE_URL, id)
-    checks = db.get_checks_by_id(DATABASE_URL, id)
+    conn = db.connect(DATABASE_URL)
+    url = db.get_url_by_id(conn, id)
+    conn = db.connect(DATABASE_URL)
+    checks = db.get_checks_by_id(conn, id)
     if not url:
         raise Exception(404)
     return render_template("url.html", url=url, checks=checks)
@@ -81,7 +86,8 @@ def get_url_by_id(id):
 @app.post('/urls/<id>/checks')
 @render_exceptions
 def set_check(id):
-    url = db.get_url_by_id(DATABASE_URL, id)
+    conn = db.connect(DATABASE_URL)
+    url = db.get_url_by_id(conn, id)
     url_name = url.name
     try:
         response = requests.get(url_name)
@@ -90,7 +96,8 @@ def set_check(id):
         flash('Произошла ошибка при проверке', 'danger')
         return redirect(url_for('get_url_by_id', id=id))
     data = [id] + get_html_data(response)
-    db.set_check(DATABASE_URL, data)
+    conn = db.connect(DATABASE_URL)
+    db.set_check(conn, data)
     flash('Страница успешно проверена', 'success')
     return redirect(url_for('get_url_by_id', id=id))
 
